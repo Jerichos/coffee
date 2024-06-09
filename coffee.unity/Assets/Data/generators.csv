@@ -1,1 +1,6 @@
 Icon,Name,Description,BaseCost,BaseCps,CostMultiplier
+,Bean Plant,,10,0.1,1.1
+,Automatic Grinder,,100,1,0
+,Espresso Machine,,200,1.5,0
+,Barista,,500,2,0
+,Plantation,,1000,3,0

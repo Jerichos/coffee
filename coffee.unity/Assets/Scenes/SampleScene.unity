@@ -534,6 +534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 612349321}
   - component: {fileID: 612349322}
+  - component: {fileID: 612349323}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -573,6 +574,20 @@ MonoBehaviour:
   TotalCoffeesGenerated: 0
   Level: 0
   CoffeesToNextLevel: 0
+--- !u!114 &612349323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612349320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad18b15ebef040f58c44958c80cc9fc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 612349322}
+  _availableGenerators: {fileID: 11400000, guid: ac94cc569bbd91d4a91eefd9f9171ae0, type: 2}
 --- !u!1 &639436970
 GameObject:
   m_ObjectHideFlags: 0

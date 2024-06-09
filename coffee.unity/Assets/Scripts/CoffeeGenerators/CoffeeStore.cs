@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace POLYGONWARE.Coffee.CoffeeGenerators
 {
-public class GeneratorStore
+public class CoffeeStore : MonoBehaviour
 {
     [SerializeField] private PlayerManager _player;
-    
-    public CoffeeGeneratorTable AvailableGenerators;
+    [SerializeField] private CoffeeGeneratorTable _availableGenerators;
     
     
 }

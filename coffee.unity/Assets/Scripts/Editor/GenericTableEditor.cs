@@ -16,6 +16,8 @@ public abstract class GenericTableEditorWindow : EditorWindow
     protected abstract Type StructType { get; }
     protected abstract IList DataList { get; }
 
+    private object _structType;
+
     private bool _showSpriteInField = false;
     
     private int pickerControlID = -1; // Control ID for the object picker
@@ -29,9 +31,12 @@ public abstract class GenericTableEditorWindow : EditorWindow
 
     protected void OnGUI()
     {
-        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.BeginVertical();
         _showSpriteInField = EditorGUILayout.Toggle("Show Sprites in Fields", _showSpriteInField);
-        EditorGUILayout.EndHorizontal();
+        _structType = EditorGUILayout.ObjectField("Struct Type", _structType as UnityEngine.Object, typeof(UnityEngine.Object), false);
+        EditorGUILayout.EndVertical();
+        
+        EditorGUILayout.Space();
         
         DrawHeader();
         DrawRows();
@@ -313,6 +318,11 @@ public abstract class GenericTableEditorWindow : EditorWindow
         Event e = Event.current;
         if (e.commandName == "ObjectSelectorUpdated")
         {
+            if (EditorGUIUtility.GetObjectPickerObject() is not Sprite sprite)
+            {
+                return;
+            }
+            
             Debug.Log("Event.current.commandName: " + e.commandName + ", pickerControlID: " + pickerControlID);
             Sprite selectedSprite = (Sprite)EditorGUIUtility.GetObjectPickerObject();
             if (selectedSprite != null)

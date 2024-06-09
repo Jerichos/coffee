@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b61d0735c87e4fc3ade3c42b26d4dcbc, type: 3}
   m_Name: CoffeeGeneratorTable
   m_EditorClassIdentifier: 
-  Generators:
-  - {fileID: 0}
+  Generators: []
