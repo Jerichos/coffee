@@ -13,16 +13,33 @@ namespace POLYGONWARE.Coffee.Editor
     {
         private Vector2 _scrollPosition;
         private FieldInfo[] _fields;
-        private Type _structType;
+        private Type _selectedType;
         private IList _dataList;
-        private object _structObject;
+        private List<string> _uniqueIdentifiers = new();
+        private object _selectedObject;
         private bool _showSpriteInField = false;
+        private bool _uniqueIdentifier = false; // extra first column for unique identifier
+        private bool _customUniqueIdentifier = false; // if false, index is used as unique identifier
+        private string _namePrefix = string.Empty;
+        private string _nameSuffix = string.Empty;
+        
         private object _pickerItem; // Item currently being edited
         private FieldInfo _pickerField; // Field currently being edited
         private List<Type> _structTypes;
-        private int _selectedStructIndex = 0;
+        private List<Type> _scriptableObjectTypes;
+        private int _selectedTypeIndex = 0;
         private string _searchString = string.Empty;
-        private List<Type> _filteredStructTypes;
+        private List<Type> _filteredTypes;
+        //private bool _isStructSelected = true;
+        private SupportedType _selectedSupportedType = SupportedType.STRUCT;
+        
+        private Dictionary<string, bool> _fieldCheckboxes = new();
+
+        private enum SupportedType
+        {
+            STRUCT,
+            SCRIPTABLE_OBJECT
+        }
 
         [MenuItem("Window/Data/Data Table Editor")]
         private static void ShowWindow()
@@ -35,40 +52,68 @@ namespace POLYGONWARE.Coffee.Editor
         private void OnEnable()
         {
             _structTypes = GetStructTypes();
-            _filteredStructTypes = new List<Type>(_structTypes);
-            if (_structTypes.Any())
+            _scriptableObjectTypes = GetScriptableObjectTypes();
+            _filteredTypes = new List<Type>(_structTypes);
+            if (_filteredTypes.Any())
             {
-                _structType = _structTypes[_selectedStructIndex];
-                _fields = _structType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-                _dataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_structType));
+                _selectedType = _filteredTypes[_selectedTypeIndex];
+                InitializeFields();
+                
+                // _fields = _selectedType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+                // _dataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_selectedType));
+                // _uniqueIdentifiers = new List<string>();
+                //
+                // // init checkboxes
+                // _fieldCheckboxes = _fields.ToDictionary(f => f.Name, f => false);
             }
         }
 
         private void OnGUI()
         {
-            EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginVertical(GUILayout.Width(500));
             _showSpriteInField = EditorGUILayout.Toggle("Show Sprites in Fields", _showSpriteInField);
+            _uniqueIdentifier = EditorGUILayout.Toggle("Unique Identifier", _uniqueIdentifier);
 
-            EditorGUILayout.LabelField("Search Struct Type");
+            if (_uniqueIdentifier)
+            {
+                _customUniqueIdentifier = EditorGUILayout.Toggle("Custom Unique Identifier", _customUniqueIdentifier);
+            }
+
+            // _isStructSelected = EditorGUILayout.Toggle("Struct", _isStructSelected);
+            _selectedSupportedType = (SupportedType)EditorGUILayout.EnumPopup("Select Type", _selectedSupportedType);
+
+            if (_selectedSupportedType == SupportedType.SCRIPTABLE_OBJECT)
+            {
+                // settings for scriptable objects
+                EditorGUILayout.LabelField("ScriptableObject Settings");
+                _namePrefix = EditorGUILayout.TextField("Export Prefix", _namePrefix);
+                _nameSuffix = EditorGUILayout.TextField("Export Suffix", _nameSuffix);
+            }
+
+            EditorGUILayout.LabelField("Search Type");
             _searchString = EditorGUILayout.TextField(_searchString);
             if (GUILayout.Button("Search"))
             {
-                SearchStructTypes();
+                SearchTypes();
             }
 
-            _selectedStructIndex = EditorGUILayout.Popup("Select Struct Type", _selectedStructIndex, _filteredStructTypes.Select(t => t.Name).ToArray());
-            if (_structType != _filteredStructTypes[_selectedStructIndex])
+            _selectedTypeIndex = EditorGUILayout.Popup("Select Type", _selectedTypeIndex, _filteredTypes.Select(t => t.Name).ToArray());
+            if (_selectedType != _filteredTypes[_selectedTypeIndex])
             {
-                _structType = _filteredStructTypes[_selectedStructIndex];
-                _fields = _structType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-                _dataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_structType));
+                _selectedType = _filteredTypes[_selectedTypeIndex];
+                InitializeFields();
+                
+                // _fields = _selectedType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+                // _dataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_selectedType));
+                //
+                // _fieldCheckboxes = _fields.ToDictionary(f => f.Name, f => false);
             }
 
             EditorGUILayout.EndVertical();
 
-            if (_structType == null)
+            if (_selectedType == null)
             {
-                EditorGUILayout.HelpBox("Please select a struct type", MessageType.Warning);
+                EditorGUILayout.HelpBox("Please select a type", MessageType.Warning);
                 return;
             }
 
@@ -92,6 +137,11 @@ namespace POLYGONWARE.Coffee.Editor
             {
                 ExportToCSV();
             }
+            
+            if (_selectedSupportedType == SupportedType.SCRIPTABLE_OBJECT && GUILayout.Button("Export to ScriptableObjects"))
+            {
+                ExportToScriptableObjects();
+            }
 
             if (GUILayout.Button("Import from CSV"))
             {
@@ -101,14 +151,39 @@ namespace POLYGONWARE.Coffee.Editor
             EditorGUILayout.EndHorizontal();
             HandlePickSprite();
         }
+        
+        private void InitializeFields()
+        {
+            _fields = _selectedType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            _dataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_selectedType));
+            _uniqueIdentifiers = new List<string>();
+            _fieldCheckboxes = _fields.ToDictionary(f => f.Name, f => false);
+        }
 
         private void DrawHeader()
         {
             EditorGUILayout.BeginHorizontal();
+
+            if (_uniqueIdentifier)
+            {
+                GUILayout.Label("ID", EditorStyles.boldLabel, GUILayout.Width(50));
+            }
+
             foreach (var field in _fields)
             {
-                GUILayout.Label(field.Name, EditorStyles.boldLabel, GUILayout.Width(GetFieldWidth(field.FieldType)));
+                EditorGUILayout.BeginHorizontal(GUILayout.Width(GetFieldWidth(field.FieldType)));
+                GUILayout.Label(field.Name, EditorStyles.boldLabel);
+                if (_fieldCheckboxes.ContainsKey(field.Name))
+                {
+                    _fieldCheckboxes[field.Name] = EditorGUILayout.Toggle(_fieldCheckboxes[field.Name], GUILayout.Width(15));
+                }
+                else
+                {
+                    _fieldCheckboxes[field.Name] = false;
+                }
+                EditorGUILayout.EndHorizontal();
             }
+
             GUILayout.Label("Actions", EditorStyles.boldLabel, GUILayout.Width(100));
             EditorGUILayout.EndHorizontal();
         }
@@ -118,11 +193,27 @@ namespace POLYGONWARE.Coffee.Editor
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
             int removeIndex = -1;
-
+            
             for (int i = 0; i < _dataList.Count; i++)
             {
                 EditorGUILayout.BeginHorizontal();
                 var item = _dataList[i];
+                
+                if (_uniqueIdentifier)
+                {
+                    if (!_customUniqueIdentifier)
+                    {
+                        GUILayout.Label(_uniqueIdentifiers[i], GUILayout.Width(50));
+                    }
+                    else
+                    {
+                        // user specific unique identifier as first column
+                        //wEditorGUILayout.TextField((string)value, GUILayout.Width(GetFieldWidth(fieldType))
+                        _uniqueIdentifiers[i] = EditorGUILayout.TextField(_uniqueIdentifiers[i], GUILayout.Width(50));
+                    }
+                        
+                }
+                
                 foreach (var field in _fields)
                 {
                     DrawField(ref item, field);
@@ -140,6 +231,9 @@ namespace POLYGONWARE.Coffee.Editor
             if (removeIndex >= 0)
             {
                 _dataList.RemoveAt(removeIndex);
+
+                if (_uniqueIdentifier)
+                    _uniqueIdentifiers.RemoveAt(removeIndex);
             }
         }
 
@@ -207,8 +301,9 @@ namespace POLYGONWARE.Coffee.Editor
 
         private void AddNewRow()
         {
-            var newItem = Activator.CreateInstance(_structType);
+            var newItem = Activator.CreateInstance(_selectedType);
             _dataList.Add(newItem);
+            _uniqueIdentifiers.Add((_dataList.Count - 1).ToString());
         }
 
         private float GetFieldWidth(Type fieldType)
@@ -233,6 +328,87 @@ namespace POLYGONWARE.Coffee.Editor
             {
                 return 100; // Default width for unsupported types
             }
+        }
+        
+        private void ExportToScriptableObjects()
+        {
+            if(_dataList.Count == 0 || _dataList == null)
+            {
+                Debug.LogWarning("Data list is empty");
+                return;
+            }
+    
+            if(_selectedSupportedType != SupportedType.SCRIPTABLE_OBJECT)
+            {
+                Debug.LogWarning("Selected type is not ScriptableObject");
+                return;
+            }
+    
+            string path = EditorUtility.OpenFolderPanel("Export ScriptableObjects", "", "");
+    
+            // Convert the absolute path to a relative project path
+            path = path.Replace(Application.dataPath, "Assets");
+    
+            if (string.IsNullOrEmpty(path))
+            {
+                Debug.LogWarning("Export path is empty");
+                return;
+            }
+
+            for (int index = 0; index < _dataList.Count; index++)
+            {
+                var item = _dataList[index];
+                var scriptableObject = ScriptableObject.CreateInstance(_selectedType);
+        
+                foreach (var field in _fields)
+                {
+                    var value = field.GetValue(item);
+                    field.SetValue(scriptableObject, value);
+                }
+
+                string id = "";
+                string valueNaming = "";
+                string fileName = "";
+
+                if (_uniqueIdentifier)
+                {
+                    // Unique identifier (first column)
+                    id = _uniqueIdentifiers[index];
+                }
+
+                // Append selected fields to the name
+                foreach (var field in _fields)
+                {
+                    if (_fieldCheckboxes[field.Name])
+                    {
+                        var value = field.GetValue(item);
+                        valueNaming += $"_{value}";
+                    }
+                }
+                
+                if(!string.IsNullOrEmpty(_namePrefix))
+                    fileName += $"{_namePrefix}_";
+                
+                if(!string.IsNullOrEmpty(id))
+                    fileName += $"{id}_";
+                
+                if(!string.IsNullOrEmpty(_nameSuffix))
+                    fileName += $"{_nameSuffix}_";
+                
+                if(!string.IsNullOrEmpty(valueNaming))
+                    fileName += $"{valueNaming}";
+                
+                
+                fileName = $"{fileName}.asset";
+                fileName = fileName.Replace(" ", "_");
+
+                string assetPath = Path.Combine(path, fileName);
+        
+                AssetDatabase.CreateAsset(scriptableObject, assetPath);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         private void ExportToCSV()
@@ -271,7 +447,7 @@ namespace POLYGONWARE.Coffee.Editor
             string path = EditorUtility.OpenFilePanel("Import CSV", "", "csv");
             if (string.IsNullOrEmpty(path)) return;
 
-            var newDataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_structType));
+            var newDataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_selectedType));
 
             using (StreamReader reader = new StreamReader(path))
             {
@@ -286,7 +462,18 @@ namespace POLYGONWARE.Coffee.Editor
                     var line = reader.ReadLine();
                     var values = line.Split(',');
 
-                    var newItem = Activator.CreateInstance(_structType);
+                    object newItem;
+                    
+                    if(_selectedSupportedType == SupportedType.SCRIPTABLE_OBJECT)
+                    {
+                        newItem = CreateInstance(_selectedType);
+                    }
+                    else
+                    {
+                        newItem = Activator.CreateInstance(_selectedType);
+                    }
+
+                    // object newItem = Activator.CreateInstance(_selectedType);
                     for (int i = 0; i < fieldNames.Length; i++)
                     {
                         var field = _fields.FirstOrDefault(f => f.Name == fieldNames[i]);
@@ -304,6 +491,7 @@ namespace POLYGONWARE.Coffee.Editor
             foreach (var item in newDataList)
             {
                 _dataList.Add(item);
+                _uniqueIdentifiers.Add((_dataList.Count - 1).ToString());
             }
         }
 
@@ -376,28 +564,28 @@ namespace POLYGONWARE.Coffee.Editor
             }
         }
 
-        private void SearchStructTypes()
+        private void SearchTypes()
         {
             if (string.IsNullOrWhiteSpace(_searchString))
             {
-                _filteredStructTypes = new List<Type>(_structTypes);
+                _filteredTypes = _selectedSupportedType == SupportedType.STRUCT ? new List<Type>(_structTypes) : new List<Type>(_scriptableObjectTypes);
             }
             else
             {
-                _filteredStructTypes = _structTypes
+                _filteredTypes = (_selectedSupportedType == SupportedType.STRUCT ? _structTypes : _scriptableObjectTypes)
                     .Where(t => t.Name.IndexOf(_searchString, StringComparison.OrdinalIgnoreCase) >= 0)
                     .ToList();
             }
-            _selectedStructIndex = 0;
-            if (_filteredStructTypes.Count > 0)
+            _selectedTypeIndex = 0;
+            if (_filteredTypes.Count > 0)
             {
-                _structType = _filteredStructTypes[_selectedStructIndex];
-                _fields = _structType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-                _dataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_structType));
+                _selectedType = _filteredTypes[_selectedTypeIndex];
+                _fields = _selectedType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+                _dataList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(_selectedType));
             }
             else
             {
-                _structType = null;
+                _selectedType = null;
                 _fields = null;
                 _dataList = null;
             }
@@ -408,6 +596,14 @@ namespace POLYGONWARE.Coffee.Editor
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => type.IsValueType && !type.IsPrimitive && !type.IsEnum)
+                .ToList();
+        }
+
+        private List<Type> GetScriptableObjectTypes()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => type.IsSubclassOf(typeof(ScriptableObject)))
                 .ToList();
         }
     }

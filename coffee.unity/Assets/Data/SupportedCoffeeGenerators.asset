@@ -9,11 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9623d3e3933545a3822c984bad161b78, type: 3}
-  m_Name: Barista
+  m_Script: {fileID: 11500000, guid: b61d0735c87e4fc3ade3c42b26d4dcbc, type: 3}
+  m_Name: SupportedCoffeeGenerators
   m_EditorClassIdentifier: 
-  _data:
-    Icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-    Type: 0
-    CostMultiplier: 1.35
-    CoffeePerSecond: 0.1
+  Generators: []

@@ -2,6 +2,7 @@
 using POLYGONWARE.Coffee.Player;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -14,7 +15,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _levelText;
     [SerializeField] private TMP_Text _prestigeLevelText;
     [SerializeField] private TMP_Text _coffeesToNextLevelText;
+    [SerializeField] private TMP_Text _cps;
     [SerializeField] private ProgressBar _prestigeProgressBar;
+    [SerializeField] private Button _levelUPButton;
 
     private void OnEnable()
     {
@@ -23,14 +26,21 @@ public class UIManager : MonoBehaviour
         _playerManager.OnCoffeesToNextLevelChanged += OnCoffeesToNextLevelChanged;
         _playerManager.OnLevelChanged += OnLevelChanged;
         _playerManager.OnTotalCoffeesGeneratedChanged += OnTotalCoffeesGeneratedChanged;
+        _playerManager.OnCpsChanged += OnCpsChanged;
         
         OnCoffeesChanged(_playerManager.Coffees);
         OnCoffeesToNextLevelChanged(_playerManager.CoffeesToNextLevel);
         OnLevelChanged(_playerManager.Level);
         OnTotalCoffeesGeneratedChanged(_playerManager.TotalCoffeesGenerated);
+        OnCpsChanged(_playerManager.Cps);
         
         _playerManager.PrestigeManager.OnPrestigeLevelChanged += OnPrestigeLevelChanged;
         OnPrestigeLevelChanged(_playerManager.PrestigeManager.PrestigeLevel);
+    }
+
+    private void OnCpsChanged(float amount)
+    {
+        _cps.SetText(amount.ToString("F1"));
     }
 
     private void OnTotalCoffeesGeneratedChanged(uint value)

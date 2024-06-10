@@ -9,7 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b61d0735c87e4fc3ade3c42b26d4dcbc, type: 3}
-  m_Name: CoffeeGeneratorTable
+  m_Script: {fileID: 11500000, guid: 9623d3e3933545a3822c984bad161b78, type: 3}
+  m_Name: 2__Espresso_Machine
   m_EditorClassIdentifier: 
-  Generators: []
+  Icon: {fileID: 0}
+  Name: Espresso Machine
+  Description: 
+  BaseCost: 200
+  BaseCps: 1.5
+  CostMultiplier: 1.3

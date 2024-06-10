@@ -1,10 +1,20 @@
 ﻿namespace POLYGONWARE.Coffee.CoffeeGenerators
 {
+
+// MARTIANS love your coffee
+
 public class CoffeeGenerator
 {
-    public GeneratorType Type;
-    public int Cost => (1+Amount) * 10;
-    public int CoffeePerSecond = 1;
+    public uint Cost => (uint)(GeneratorSO.BaseCost + ((Amount * GeneratorSO.CostMultiplier) * GeneratorSO.BaseCost));
+    public float CoffeePerSecond => GeneratorSO.BaseCps * Amount;
     public int Amount;
+    
+    public CoffeeGeneratorSO GeneratorSO { get; private set; }
+    
+    public CoffeeGenerator(CoffeeGeneratorSO generatorSO)
+    {
+        GeneratorSO = generatorSO;
+        Amount = 1;
+    }
 }
 }
