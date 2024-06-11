@@ -9,22 +9,15 @@ namespace POLYGONWARE.Coffee.Player
 public class PlayerManager : MonoBehaviour
 {
     public uint Coffees { get; private set; }
-
-    // current playthru stats
     public uint TotalCoffeesGenerated { get; private set; }
-    public uint Level { get; private set; } // gains level points, unlocks generators, for max level reached there is % cps bonus on next playthru when prestige
-    public uint LevelPointsLeft { get; private set; } // +1 each level
-    public uint CoffeesToNextLevel { get; private set; }
     public float Cps { get; private set; }
     
+    public LevelManager LevelManager { get; private set; }
     public PrestigeManager PrestigeManager { get; private set; }
     public GeneratorManager GeneratorManager { get; private set; }
     
     public Action<uint> OnCoffeesChanged;
     public Action<uint> OnTotalCoffeesGeneratedChanged;
-    public Action<uint> OnCoffeesToNextLevelChanged;
-    public Action<uint> OnLevelPointsLeftChanged;
-    public Action<uint> OnLevelChanged;
     public Action<float> OnCpsChanged;
 
     private float _cookiesTemp;
@@ -32,6 +25,7 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         Debug.Log("PlayerManager Awake");
+        LevelManager = new LevelManager(this);
         PrestigeManager = new PrestigeManager();
         GeneratorManager = new GeneratorManager();
     }

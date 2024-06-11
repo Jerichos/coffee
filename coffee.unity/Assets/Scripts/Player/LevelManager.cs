@@ -7,11 +7,11 @@ public class LevelManager
     public uint Level { get; private set; }
     public uint LevelPoints { get; private set; }
     
-    public uint CookiesToNextLevel => 10 + (1+Level) * 2^(1+Level);
+    public uint CoffeesToNextLevel => 10 + (1+Level) * 2^(1+Level);
     public uint CookiesToPreviousLevel => Level * 2^Level;
 
     private bool _canLevelUp;
-    public bool CanLevelUpgit
+    public bool CanLevelUp
     {
         get => _canLevelUp;
         private set
@@ -22,6 +22,7 @@ public class LevelManager
     }
     
     public Action<bool> CanLevelUPEvent;
+    public Action<uint> OnLevelChanged;
 
     private PlayerManager _player;
     
@@ -31,17 +32,30 @@ public class LevelManager
         
         _player = player;
         _player.OnTotalCoffeesGeneratedChanged += OnTotalCoffeesGeneratedChanged;
+        
         OnTotalCoffeesGeneratedChanged(_player.TotalCoffeesGenerated);
+    }
+
+    public void LevelUp()
+    {
+        Level++;
+        LevelPoints++;
+        
+        // TODO: Add some kind of reward for leveling up
+        
+        OnTotalCoffeesGeneratedChanged(_player.TotalCoffeesGenerated);
+        OnLevelChanged?.Invoke(Level);
     }
 
     private void OnTotalCoffeesGeneratedChanged(uint amount)
     {
-        if (amount >= CookiesToNextLevel)
+        if (amount >= CoffeesToNextLevel)
         {
-            Level++;
-            LevelPoints++;
-            _player.OnLevelChanged?.Invoke(Level);
-            _player.OnLevelPointsLeftChanged?.Invoke(LevelPoints);
+            CanLevelUp = true;
+        }
+        else
+        {
+            CanLevelUp = false;
         }
     }
 }

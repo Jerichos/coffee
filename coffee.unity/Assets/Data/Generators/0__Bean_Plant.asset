@@ -16,5 +16,5 @@ MonoBehaviour:
   Name: Bean Plant
   Description: 
   BaseCost: 10
-  BaseCps: 0.1
+  BaseCps: 0.3
   CostMultiplier: 1.1

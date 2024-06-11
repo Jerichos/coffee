@@ -1,10 +1,10 @@
-﻿using System;
-using POLYGONWARE.Coffee.Player;
+﻿using POLYGONWARE.Coffee.Player;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace POLYGONWARE.Coffee.UI
 {
 public class UIManager : MonoBehaviour
 {
@@ -23,19 +23,26 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("OnEnable UIManager.cs");
         _playerManager.OnCoffeesChanged += OnCoffeesChanged;
-        _playerManager.OnCoffeesToNextLevelChanged += OnCoffeesToNextLevelChanged;
-        _playerManager.OnLevelChanged += OnLevelChanged;
+        _playerManager.LevelManager.OnLevelChanged += OnLevelChanged;
         _playerManager.OnTotalCoffeesGeneratedChanged += OnTotalCoffeesGeneratedChanged;
         _playerManager.OnCpsChanged += OnCpsChanged;
         
         OnCoffeesChanged(_playerManager.Coffees);
-        OnCoffeesToNextLevelChanged(_playerManager.CoffeesToNextLevel);
-        OnLevelChanged(_playerManager.Level);
+        OnLevelChanged(_playerManager.LevelManager.Level);
         OnTotalCoffeesGeneratedChanged(_playerManager.TotalCoffeesGenerated);
         OnCpsChanged(_playerManager.Cps);
         
+        _playerManager.LevelManager.CanLevelUPEvent += OnCanLevelUpChanged;
+        OnCanLevelUpChanged(_playerManager.LevelManager.CanLevelUp);
+        
         _playerManager.PrestigeManager.OnPrestigeLevelChanged += OnPrestigeLevelChanged;
         OnPrestigeLevelChanged(_playerManager.PrestigeManager.PrestigeLevel);
+    }
+
+    private void OnCanLevelUpChanged(bool value)
+    {
+        _levelUPButton.gameObject.SetActive(value);
+        _prestigeProgressBar.gameObject.SetActive(!value);
     }
 
     private void OnCpsChanged(float amount)
@@ -47,7 +54,23 @@ public class UIManager : MonoBehaviour
     {
         _totalCoffeesText.SetText(value.ToString());
         
-        _prestigeProgressBar.SetValue((float)value / _playerManager.PrestigeManager.CoffeesToNextPrestigeLevel);
+        float progressValue = (float) _playerManager.TotalCoffeesGenerated / _playerManager.LevelManager.CoffeesToNextLevel;
+        _prestigeProgressBar.SetValue(progressValue);
+        
+        int coffeesLeft = (int)(_playerManager.LevelManager.CoffeesToNextLevel - _playerManager.TotalCoffeesGenerated);
+        coffeesLeft = Mathf.Clamp(coffeesLeft, 0, coffeesLeft);
+        _coffeesToNextLevelText.SetText(coffeesLeft.ToString());
+
+        if (coffeesLeft > 0)
+        {
+            _prestigeProgressBar.gameObject.SetActive(true);
+            _levelUPButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            _prestigeProgressBar.gameObject.SetActive(false);
+            _levelUPButton.gameObject.SetActive(true);
+        }
     }
 
     private void OnPrestigeLevelChanged(uint value)
@@ -57,12 +80,10 @@ public class UIManager : MonoBehaviour
 
     private void OnLevelChanged(uint value)
     {
+        float progressValue = (float) _playerManager.TotalCoffeesGenerated / _playerManager.LevelManager.CoffeesToNextLevel;
+        _prestigeProgressBar.SetValue(progressValue);
+        
         _levelText.SetText(value.ToString());
-    }
-
-    private void OnCoffeesToNextLevelChanged(uint value)
-    {
-        _coffeesToNextLevelText.SetText(value.ToString());
     }
 
     private void OnCoffeesChanged(uint value)
