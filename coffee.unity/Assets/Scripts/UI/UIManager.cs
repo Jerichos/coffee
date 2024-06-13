@@ -18,6 +18,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _cps;
     [SerializeField] private ProgressBar _prestigeProgressBar;
     [SerializeField] private Button _levelUPButton;
+    
+    private int CoffeesToNextLevelLeft => (int)(_playerManager.LevelManager.CoffeesToNextLevel - _playerManager.TotalCoffeesGenerated);
 
     private void OnEnable()
     {
@@ -55,13 +57,20 @@ public class UIManager : MonoBehaviour
         _totalCoffeesText.SetText(value.ToString());
         
         float progressValue = (float) _playerManager.TotalCoffeesGenerated / _playerManager.LevelManager.CoffeesToNextLevel;
-        _prestigeProgressBar.SetValue(progressValue);
         
-        int coffeesLeft = (int)(_playerManager.LevelManager.CoffeesToNextLevel - _playerManager.TotalCoffeesGenerated);
-        coffeesLeft = Mathf.Clamp(coffeesLeft, 0, coffeesLeft);
-        _coffeesToNextLevelText.SetText(coffeesLeft.ToString());
+        // totalCofees = 15
+        // coffeesToNextLevel = 20
+        // coffeesToPreviousLevel = 10
+        uint coffesTotalMinusPreviousLevel = _playerManager.TotalCoffeesGenerated - _playerManager.LevelManager.CookiesToPreviousLevel;
+        uint coffesToNextLevel = _playerManager.LevelManager.CoffeesToNextLevel - _playerManager.LevelManager.CookiesToPreviousLevel;
+        float progressValue2 = (float)coffesTotalMinusPreviousLevel / coffesToNextLevel;
+        
+        _prestigeProgressBar.SetValue(progressValue2);
+        Debug.Log("progressValue: " + progressValue2);
+        
+        _coffeesToNextLevelText.SetText(CoffeesToNextLevelLeft.ToString());
 
-        if (coffeesLeft > 0)
+        if (CoffeesToNextLevelLeft > 0)
         {
             _prestigeProgressBar.gameObject.SetActive(true);
             _levelUPButton.gameObject.SetActive(false);
@@ -82,6 +91,8 @@ public class UIManager : MonoBehaviour
     {
         float progressValue = (float) _playerManager.TotalCoffeesGenerated / _playerManager.LevelManager.CoffeesToNextLevel;
         _prestigeProgressBar.SetValue(progressValue);
+        
+        _coffeesToNextLevelText.SetText(CoffeesToNextLevelLeft.ToString());
         
         _levelText.SetText(value.ToString());
     }

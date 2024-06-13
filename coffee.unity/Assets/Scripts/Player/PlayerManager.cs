@@ -75,6 +75,11 @@ public class PlayerManager : MonoBehaviour
         OnCoffeesChanged?.Invoke(Coffees);
     }
     
+    public void LevelUP()
+    {
+        LevelManager.LevelUp();
+    }
+    
     public void AddGeneratedCoffee(uint amount)
     {
         Coffees += amount;

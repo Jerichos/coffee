@@ -34,6 +34,11 @@ public class CoffeeGeneratorSlotUI : MonoBehaviour
 
     private void OnCoffeesChanged(uint amount)
     {
+        if (_buyButton == null)
+        {
+            Debug.LogWarning("Buy button is null", gameObject);
+            return;
+        }
         // disable buy button if not enough coffees
         if(_player.GeneratorManager.GetGeneratorCost(_generatorSO) > _player.Coffees)
             _buyButton.interactable = false;

@@ -6,9 +6,9 @@ public class LevelManager
 {
     public uint Level { get; private set; }
     public uint LevelPoints { get; private set; }
-    
-    public uint CoffeesToNextLevel => 10 + (1+Level) * 2^(1+Level);
-    public uint CookiesToPreviousLevel => Level * 2^Level;
+
+    public uint CoffeesToNextLevel => 10 + (10 * Level*Level);
+    public uint CookiesToPreviousLevel => 10 + (10 * ((Level - 1) * (Level - 1)));
 
     private bool _canLevelUp;
     public bool CanLevelUp

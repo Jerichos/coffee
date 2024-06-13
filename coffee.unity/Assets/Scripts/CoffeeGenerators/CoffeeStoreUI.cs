@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using POLYGONWARE.Coffee.Player;
 using POLYGONWARE.Coffee.UI;
-using UI;
 using UnityEngine;
 
 namespace POLYGONWARE.Coffee.CoffeeGenerators
 {
-public class CoffeeStore : MonoBehaviour
+
+public class CoffeeStoreUI : MonoBehaviour
 {
     [SerializeField] private Transform _generatorSlotsParent;
     [Space]
     [SerializeField] private PlayerManager _player;
     [SerializeField] private CoffeeGeneratorTable _availableGenerators;
     [SerializeField] private CoffeeGeneratorSlotUI _generatorSlotPrefab;
-    
     
     private readonly List<CoffeeGeneratorSlotUI> _generatorSlots = new();
 
@@ -24,7 +23,7 @@ public class CoffeeStore : MonoBehaviour
             _generatorSlotPrefab.gameObject.SetActive(false);
     }
 
-    private void OnEnable()
+    private void Start()
     {
         _player.GeneratorManager.GeneratorsChangedEvent += OnGeneratorsChanged;
         OnGeneratorsChanged(_player.GeneratorManager.Generators);
@@ -61,15 +60,6 @@ public class CoffeeStore : MonoBehaviour
         
         _player.ConsumeCoffee(cost);
         _player.GeneratorManager.AddGenerator(generator);
-    }
-
-    private void OnDisable()
-    {
-        foreach (var slot in _generatorSlots)
-        {
-            Destroy(slot.gameObject);
-        }
-        _generatorSlots.Clear();
     }
 }
 }
