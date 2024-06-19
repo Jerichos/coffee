@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Vector2 = UnityEngine.Vector2;
 
 namespace POLYGONWARE.Coffee.Editor
 {
@@ -135,7 +137,7 @@ namespace POLYGONWARE.Coffee.Editor
 
             if (GUILayout.Button("Export to CSV"))
             {
-                ExportToCSV();
+                ExportToCsv();
             }
             
             if (_selectedSupportedType == SupportedType.SCRIPTABLE_OBJECT && GUILayout.Button("Export to ScriptableObjects"))
@@ -145,7 +147,7 @@ namespace POLYGONWARE.Coffee.Editor
 
             if (GUILayout.Button("Import from CSV"))
             {
-                ImportFromCSV();
+                ImportFromCsv();
             }
 
             EditorGUILayout.EndHorizontal();
@@ -242,9 +244,23 @@ namespace POLYGONWARE.Coffee.Editor
             object value = field.GetValue(item);
             Type fieldType = field.FieldType;
 
-            if (fieldType == typeof(int))
+            if (fieldType == typeof(BigInteger))
+            {
+                BigInteger valueBigInt = (BigInteger)value;
+                Debug.Log("valueBigInt: " + valueBigInt);
+                field.SetValue(item, BigInteger.Parse(EditorGUILayout.TextField(valueBigInt.ToString(), GUILayout.Width(GetFieldWidth(fieldType)))));
+            }
+            else if (fieldType == typeof(uint))
+            {
+                field.SetValue(item, (uint)EditorGUILayout.IntField((int)(uint)value, GUILayout.Width(GetFieldWidth(fieldType))));
+            }
+            else if (fieldType == typeof(int))
             {
                 field.SetValue(item, EditorGUILayout.IntField((int)value, GUILayout.Width(GetFieldWidth(fieldType))));
+            }
+            else if (fieldType == typeof(double))
+            {
+                field.SetValue(item, EditorGUILayout.DoubleField((double)value, GUILayout.Width(GetFieldWidth(fieldType))));
             }
             else if (fieldType == typeof(float))
             {
@@ -332,86 +348,96 @@ namespace POLYGONWARE.Coffee.Editor
         
         private void ExportToScriptableObjects()
         {
-            if(_dataList.Count == 0 || _dataList == null)
+            if (_dataList == null || _dataList.Count == 0)
+        {
+            Debug.LogWarning("Data list is empty");
+            return;
+        }
+
+        if (_selectedSupportedType != SupportedType.SCRIPTABLE_OBJECT)
+        {
+            Debug.LogWarning("Selected type is not ScriptableObject");
+            return;
+        }
+
+        string path = EditorUtility.OpenFolderPanel("Export ScriptableObjects", "", "");
+
+        // Convert the absolute path to a relative project path
+        path = path.Replace(Application.dataPath, "Assets");
+
+        if (string.IsNullOrEmpty(path))
+        {
+            Debug.LogWarning("Export path is empty");
+            return;
+        }
+
+        for (int index = 0; index < _dataList.Count; index++)
+        {
+            var item = _dataList[index];
+            ScriptableObject scriptableObject = null;
+
+            string id = "";
+            string valueNaming = "";
+            string fileName = "";
+
+            if (_uniqueIdentifier)
             {
-                Debug.LogWarning("Data list is empty");
-                return;
-            }
-    
-            if(_selectedSupportedType != SupportedType.SCRIPTABLE_OBJECT)
-            {
-                Debug.LogWarning("Selected type is not ScriptableObject");
-                return;
-            }
-    
-            string path = EditorUtility.OpenFolderPanel("Export ScriptableObjects", "", "");
-    
-            // Convert the absolute path to a relative project path
-            path = path.Replace(Application.dataPath, "Assets");
-    
-            if (string.IsNullOrEmpty(path))
-            {
-                Debug.LogWarning("Export path is empty");
-                return;
+                // Unique identifier (first column)
+                id = _uniqueIdentifiers[index];
             }
 
-            for (int index = 0; index < _dataList.Count; index++)
+            // Append selected fields to the name
+            foreach (var field in _fields)
             {
-                var item = _dataList[index];
-                var scriptableObject = ScriptableObject.CreateInstance(_selectedType);
-        
-                foreach (var field in _fields)
+                if (_fieldCheckboxes[field.Name])
                 {
                     var value = field.GetValue(item);
-                    field.SetValue(scriptableObject, value);
+                    valueNaming += $"_{value}";
                 }
+            }
 
-                string id = "";
-                string valueNaming = "";
-                string fileName = "";
+            if (!string.IsNullOrEmpty(_namePrefix))
+                fileName += $"{_namePrefix}_";
 
-                if (_uniqueIdentifier)
-                {
-                    // Unique identifier (first column)
-                    id = _uniqueIdentifiers[index];
-                }
+            if (!string.IsNullOrEmpty(id))
+                fileName += $"{id}_";
 
-                // Append selected fields to the name
-                foreach (var field in _fields)
-                {
-                    if (_fieldCheckboxes[field.Name])
-                    {
-                        var value = field.GetValue(item);
-                        valueNaming += $"_{value}";
-                    }
-                }
-                
-                if(!string.IsNullOrEmpty(_namePrefix))
-                    fileName += $"{_namePrefix}_";
-                
-                if(!string.IsNullOrEmpty(id))
-                    fileName += $"{id}_";
-                
-                if(!string.IsNullOrEmpty(_nameSuffix))
-                    fileName += $"{_nameSuffix}_";
-                
-                if(!string.IsNullOrEmpty(valueNaming))
-                    fileName += $"{valueNaming}";
-                
-                
-                fileName = $"{fileName}.asset";
-                fileName = fileName.Replace(" ", "_");
+            if (!string.IsNullOrEmpty(_nameSuffix))
+                fileName += $"{_nameSuffix}_";
 
-                string assetPath = Path.Combine(path, fileName);
-        
+            if (!string.IsNullOrEmpty(valueNaming))
+                fileName += $"{valueNaming}";
+
+            fileName = $"{fileName}.asset";
+            fileName = fileName.Replace(" ", "_");
+
+            string assetPath = Path.Combine(path, fileName);
+
+            // Check if the asset already exists
+            scriptableObject = AssetDatabase.LoadAssetAtPath<ScriptableObject>(assetPath);
+
+            if (scriptableObject == null)
+            {
+                // If it doesn't exist, create a new one
+                scriptableObject = ScriptableObject.CreateInstance(_selectedType);
                 AssetDatabase.CreateAsset(scriptableObject, assetPath);
             }
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            // Update the fields of the existing or new scriptableObject
+            foreach (var field in _fields)
+            {
+                var value = field.GetValue(item);
+                field.SetValue(scriptableObject, value);
+            }
+
+            EditorUtility.SetDirty(scriptableObject);
         }
 
-        private void ExportToCSV()
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        }
+
+        private void ExportToCsv()
         {
             string path = EditorUtility.SaveFilePanel("Export CSV", "", "data.csv", "csv");
             if (string.IsNullOrEmpty(path)) return;
@@ -442,7 +468,7 @@ namespace POLYGONWARE.Coffee.Editor
             AssetDatabase.Refresh();
         }
 
-        private void ImportFromCSV()
+        private void ImportFromCsv()
         {
             string path = EditorUtility.OpenFilePanel("Import CSV", "", "csv");
             if (string.IsNullOrEmpty(path)) return;
@@ -497,9 +523,21 @@ namespace POLYGONWARE.Coffee.Editor
 
         private object ConvertValue(Type fieldType, string value)
         {
-            if (fieldType == typeof(int))
+            if (fieldType == typeof(BigInteger))
+            {
+                return BigInteger.Parse(value);
+            }
+            if (fieldType == typeof(uint))
+            {
+                return uint.Parse(value);
+            }
+            else if (fieldType == typeof(int))
             {
                 return int.Parse(value);
+            }
+            else if (fieldType == typeof(double))
+            {
+                return double.Parse(value);
             }
             else if (fieldType == typeof(float))
             {
@@ -523,6 +561,10 @@ namespace POLYGONWARE.Coffee.Editor
                     var sprites = AssetDatabase.LoadAllAssetsAtPath(texturePath).OfType<Sprite>();
                     return sprites.FirstOrDefault(s => s.name == spriteName);
                 }
+            }
+            else
+            {
+                Debug.LogWarning("Unsupported field type: " + fieldType);
             }
             // Add more field types as needed
             return null;

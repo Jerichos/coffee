@@ -1,4 +1,6 @@
-﻿using POLYGONWARE.Coffee.Player;
+﻿using System.Numerics;
+using POLYGONWARE.Coffee.Player;
+using POLYGONWARE.Coffee.Utilities;
 using TMPro;
 using UI;
 using UnityEngine;
@@ -13,32 +15,51 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _currentCoffeesText;
     [SerializeField] private TMP_Text _totalCoffeesText;
     [SerializeField] private TMP_Text _levelText;
-    [SerializeField] private TMP_Text _prestigeLevelText;
     [SerializeField] private TMP_Text _coffeesToNextLevelText;
     [SerializeField] private TMP_Text _cps;
+    [SerializeField] private TMP_Text _levelPointsLeftText;
+    [SerializeField] private TMP_Text _timePlayedText;
+    
     [SerializeField] private ProgressBar _prestigeProgressBar;
     [SerializeField] private Button _levelUPButton;
     
-    private int CoffeesToNextLevelLeft => (int)(_playerManager.LevelManager.CoffeesToNextLevel - _playerManager.TotalCoffeesGenerated);
+    private BigInteger CoffeesToNextLevelLeft => _playerManager.LevelManager.CoffeesToNextLevel - _playerManager.TotalCoffeesGenerated;
+    private decimal ProgressValue2 =>
+        (decimal)(_playerManager.TotalCoffeesGenerated - _playerManager.LevelManager.GetCoffeesForPreviousLevel()) /
+        (decimal)(_playerManager.LevelManager.CoffeesToNextLevel - _playerManager.LevelManager.GetCoffeesForPreviousLevel());
 
     private void OnEnable()
     {
         Debug.Log("OnEnable UIManager.cs");
         _playerManager.OnCoffeesChanged += OnCoffeesChanged;
-        _playerManager.LevelManager.OnLevelChanged += OnLevelChanged;
+        _playerManager.LevelManager.LevelChangedEvent += OnLevelChanged;
         _playerManager.OnTotalCoffeesGeneratedChanged += OnTotalCoffeesGeneratedChanged;
         _playerManager.OnCpsChanged += OnCpsChanged;
+        _playerManager.PlayerStatsChangedEvent += OnPlayerStatsChanged;
         
         OnCoffeesChanged(_playerManager.Coffees);
         OnLevelChanged(_playerManager.LevelManager.Level);
         OnTotalCoffeesGeneratedChanged(_playerManager.TotalCoffeesGenerated);
         OnCpsChanged(_playerManager.Cps);
         
+        _playerManager.LevelManager.LevelPointsChangedEvent += OnLevelPointsChanged;
         _playerManager.LevelManager.CanLevelUPEvent += OnCanLevelUpChanged;
+        OnLevelPointsChanged(_playerManager.LevelManager.LevelPoints);
         OnCanLevelUpChanged(_playerManager.LevelManager.CanLevelUp);
-        
-        _playerManager.PrestigeManager.OnPrestigeLevelChanged += OnPrestigeLevelChanged;
-        OnPrestigeLevelChanged(_playerManager.PrestigeManager.PrestigeLevel);
+    }
+
+    private void OnPlayerStatsChanged(PlayerStats playerStats)
+    {
+        _timePlayedText.SetText(Util.FormatSecondsToDDHHMM(playerStats.SecondsPlayed));
+    }
+
+    private void OnLevelPointsChanged(uint value)
+    {
+        _levelPointsLeftText.SetText(value.ToString());
+        if(value > 0)
+            _levelPointsLeftText.gameObject.SetActive(true);
+        else
+            _levelPointsLeftText.gameObject.SetActive(false);
     }
 
     private void OnCanLevelUpChanged(bool value)
@@ -47,26 +68,26 @@ public class UIManager : MonoBehaviour
         _prestigeProgressBar.gameObject.SetActive(!value);
     }
 
-    private void OnCpsChanged(float amount)
+    private void OnCpsChanged(double amount)
     {
         _cps.SetText(amount.ToString("F1"));
     }
 
-    private void OnTotalCoffeesGeneratedChanged(uint value)
+    private void OnTotalCoffeesGeneratedChanged(BigInteger value)
     {
         _totalCoffeesText.SetText(value.ToString());
         
-        float progressValue = (float) _playerManager.TotalCoffeesGenerated / _playerManager.LevelManager.CoffeesToNextLevel;
+        //float progressValue = (float) _playerManager.TotalCoffeesGenerated / _playerManager.LevelManager.CoffeesToNextLevel;
         
         // totalCofees = 15
         // coffeesToNextLevel = 20
         // coffeesToPreviousLevel = 10
-        uint coffesTotalMinusPreviousLevel = _playerManager.TotalCoffeesGenerated - _playerManager.LevelManager.CookiesToPreviousLevel;
-        uint coffesToNextLevel = _playerManager.LevelManager.CoffeesToNextLevel - _playerManager.LevelManager.CookiesToPreviousLevel;
-        float progressValue2 = (float)coffesTotalMinusPreviousLevel / coffesToNextLevel;
+        // BigInteger coffesTotalMinusPreviousLevel = _playerManager.TotalCoffeesGenerated - _playerManager.LevelManager.CoffeesToPreviousLevel;
+        // BigInteger coffesToNextLevel = _playerManager.LevelManager.CoffeesToNextLevel - _playerManager.LevelManager.CoffeesToPreviousLevel;
+        //float progressValue2 = (float)((decimal)coffesTotalMinusPreviousLevel / (decimal)coffesToNextLevel);
         
-        _prestigeProgressBar.SetValue(progressValue2);
-        Debug.Log("progressValue: " + progressValue2);
+        _prestigeProgressBar.SetValue((float)ProgressValue2);
+        //Debug.Log("progressValue: " + ProgressValue2);
         
         _coffeesToNextLevelText.SetText(CoffeesToNextLevelLeft.ToString());
 
@@ -82,22 +103,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void OnPrestigeLevelChanged(uint value)
-    {
-        _prestigeLevelText.SetText(value.ToString());
-    }
-
     private void OnLevelChanged(uint value)
     {
-        float progressValue = (float) _playerManager.TotalCoffeesGenerated / _playerManager.LevelManager.CoffeesToNextLevel;
-        _prestigeProgressBar.SetValue(progressValue);
+        _prestigeProgressBar.SetValue((float)ProgressValue2);
         
         _coffeesToNextLevelText.SetText(CoffeesToNextLevelLeft.ToString());
         
         _levelText.SetText(value.ToString());
     }
 
-    private void OnCoffeesChanged(uint value)
+    private void OnCoffeesChanged(BigInteger value)
     {
         _currentCoffeesText.text = value.ToString();
     }

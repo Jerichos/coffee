@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9623d3e3933545a3822c984bad161b78, type: 3}
+  m_Name: _gen_3
+  m_EditorClassIdentifier: 
+  ID: gen_3
+  Icon: {fileID: 0}
+  Name: Generation 3
+  Description: 
+  CostString: 866
+  Cps: 3.2
+  CostMultiplierPerAmount: 1.19

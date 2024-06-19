@@ -54,12 +54,12 @@ public abstract class GenericTableEditorWindow : EditorWindow
 
         if (GUILayout.Button("Export to CSV"))
         {
-            ExportToCSV();
+            ExportToCsv();
         }
 
         if (GUILayout.Button("Import from CSV"))
         {
-            ImportFromCSV();
+            ImportFromCsv();
         }
 
         EditorGUILayout.EndHorizontal();
@@ -113,7 +113,15 @@ public abstract class GenericTableEditorWindow : EditorWindow
         object value = field.GetValue(item);
         Type fieldType = field.FieldType;
 
-        if (fieldType == typeof(int))
+        if(fieldType == typeof(uint))
+        {
+            int intValue = (int)value;
+            // only positive
+            if (intValue < 0)
+                intValue = 0;
+            field.SetValue(item, EditorGUILayout.IntField(intValue, GUILayout.Width(GetFieldWidth(fieldType))));
+        }
+        else if (fieldType == typeof(int))
         {
             field.SetValue(item, EditorGUILayout.IntField((int)value, GUILayout.Width(GetFieldWidth(fieldType))));
         }
@@ -170,7 +178,8 @@ public abstract class GenericTableEditorWindow : EditorWindow
         // Add more field types as needed
         else
         {
-            GUILayout.Label("Unsupported Type", GUILayout.Width(GetFieldWidth(fieldType)));
+            GUILayout.Label("2 Unsupported Type", GUILayout.Width(GetFieldWidth(fieldType)));
+            Debug.LogWarning("Unsupported Typee: " + fieldType);
         }
     }
 
@@ -204,7 +213,7 @@ public abstract class GenericTableEditorWindow : EditorWindow
         }
     }
     
-    private void ExportToCSV()
+    private void ExportToCsv()
     {
         string path = EditorUtility.SaveFilePanel("Export CSV", "", "data.csv", "csv");
         if (string.IsNullOrEmpty(path)) return;
@@ -235,7 +244,7 @@ public abstract class GenericTableEditorWindow : EditorWindow
         AssetDatabase.Refresh();
     }
     
-    private void ImportFromCSV()
+    private void ImportFromCsv()
     {
         string path = EditorUtility.OpenFilePanel("Import CSV", "", "csv");
         if (string.IsNullOrEmpty(path)) return;
@@ -310,6 +319,7 @@ public abstract class GenericTableEditorWindow : EditorWindow
             }
         }
         // Add more field types as needed
+        Debug.LogWarning("Unsupported Type: " + fieldType);
         return null;
     }
 

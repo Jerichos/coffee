@@ -13,8 +13,23 @@ MonoBehaviour:
   m_Name: SupportedCoffeeGenerators
   m_EditorClassIdentifier: 
   Generators:
-  - {fileID: 11400000, guid: 60aad8c405564e945adaa95ddcb4cdb7, type: 2}
-  - {fileID: 11400000, guid: 22d5cc1bf9032824fbaf60870d1f733d, type: 2}
-  - {fileID: 11400000, guid: d8a9775dc189b2944b590de4fc5334f6, type: 2}
-  - {fileID: 11400000, guid: e34a3b32424aaad4caf3689719789c74, type: 2}
-  - {fileID: 11400000, guid: 56030aaa4ec81b94baed397b8fecc6f4, type: 2}
+  - {fileID: 11400000, guid: 56d52e160367cc84da44fcee7e9aa17f, type: 2}
+  - {fileID: 11400000, guid: f0d62d740202cdd479b9dea2841208d0, type: 2}
+  - {fileID: 11400000, guid: d40e64687688a1246b818d253fd97a72, type: 2}
+  - {fileID: 11400000, guid: ff4976255930ccc4c9711433fd0c51b6, type: 2}
+  - {fileID: 11400000, guid: f701d7d8eccf90d4e931e1b2a37714c4, type: 2}
+  - {fileID: 11400000, guid: 7170422f88b9a1c41a8f9242ecbbf893, type: 2}
+  - {fileID: 11400000, guid: 06f53c90feb5cd2418900ef964235934, type: 2}
+  - {fileID: 11400000, guid: aef91fe1e834c2b45b4d4db4fc10adc3, type: 2}
+  - {fileID: 11400000, guid: 7d2c26760c74c5e4cbfd47aa3723c409, type: 2}
+  - {fileID: 11400000, guid: ef380ee9f4ad72d4da1c8b49caff68a7, type: 2}
+  - {fileID: 11400000, guid: eaa27ae83cf91084a939c63e6d412a7e, type: 2}
+  - {fileID: 11400000, guid: d26cd4e6edc6d2d4c9130be356af48c1, type: 2}
+  - {fileID: 11400000, guid: dc90eac862aaccb4188a3a52b10e800b, type: 2}
+  - {fileID: 11400000, guid: 66a579770c64263488fd61e3a8c26499, type: 2}
+  - {fileID: 11400000, guid: 90129880c4e0c9b49ab0cf47249b8900, type: 2}
+  - {fileID: 11400000, guid: b110ce79428b83a42b32189dfedcb601, type: 2}
+  - {fileID: 11400000, guid: 735185d0b2e58be4bac4d0b184ec9d8c, type: 2}
+  - {fileID: 11400000, guid: 9c14cccc955627a44b7544a8274e5916, type: 2}
+  - {fileID: 11400000, guid: 63813538067f84d4c9a8adb3221c638a, type: 2}
+  - {fileID: 11400000, guid: ebf60bd6dc31ba0479b4d8e618ca0d96, type: 2}

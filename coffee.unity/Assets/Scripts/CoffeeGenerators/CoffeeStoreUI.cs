@@ -26,7 +26,10 @@ public class CoffeeStoreUI : MonoBehaviour
     private void Start()
     {
         _player.GeneratorManager.GeneratorsChangedEvent += OnGeneratorsChanged;
+        _player.LevelManager.LevelPointsChangedEvent += OnLevelPointsChanged;
+        
         OnGeneratorsChanged(_player.GeneratorManager.Generators);
+        OnLevelPointsChanged(_player.LevelManager.LevelPoints);
         
         foreach (var generator in _availableGenerators.Generators)
         {
@@ -34,8 +37,29 @@ public class CoffeeStoreUI : MonoBehaviour
             slot.transform.SetParent(_generatorSlotsParent);
             slot.Initialize(generator, _player);
             slot.SubscribeToBuyButton(BuyGenerator);
+            slot.SubscribeToUpgradeButton(UpgradeGenerator);
             slot.gameObject.SetActive(true);
             _generatorSlots.Add(slot);
+        }
+    }
+
+    private void UpgradeGenerator(CoffeeGeneratorSlotUI generatorSlotUI)
+    {
+        if(_player.LevelManager.LevelPoints <= 0)
+            return;
+        
+        _player.UpgradeGenerator(generatorSlotUI.GeneratorSO, (upgraded =>
+        {
+            if(upgraded)
+                generatorSlotUI.UpdateSlot();
+        }));
+    }
+
+    private void OnLevelPointsChanged(uint levelPoints)
+    {
+        foreach (var slot in _generatorSlots)
+        {
+            slot.UpdateSlot();
         }
     }
 
@@ -51,7 +75,7 @@ public class CoffeeStoreUI : MonoBehaviour
 
     private void BuyGenerator(CoffeeGeneratorSO generator)
     {
-        var cost = _player.GeneratorManager.GetGeneratorCost(generator);
+        var cost = _player.GeneratorManager.GetCost(generator);
         if (cost > _player.Coffees)
         {
             Debug.Log("not enough coffees to buy generator");
