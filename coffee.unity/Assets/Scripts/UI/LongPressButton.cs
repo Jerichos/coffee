@@ -5,20 +5,33 @@ namespace POLYGONWARE.Coffee.UI
 {
 public class LongPressButton : Button
 {
+    private float _invokesPerSecond = 8f;
+    private float _timeToHold = 0.5f;
+    
     // long press button for automatically buying generators when holding the button
     private bool _isPressed;
     private float _timePressed;
-    private float _timeToHold = 0.5f;
+    private float _timeToInvokeT;
+    private float _timeToInvoke;
     
     private void Update()
     {
         if (_isPressed)
         {
+            _timeToInvoke = 1f / _invokesPerSecond;
             _timePressed += Time.deltaTime;
+            
             if (_timePressed >= _timeToHold)
             {
-                onClick.Invoke();
-                _timePressed = 0;
+                _timeToInvokeT += Time.deltaTime;
+                Debug.Log("timeInvokeT: " + _timeToInvokeT + " timeInvoke: " + _timeToInvoke);
+                
+                if (_timeToInvokeT >= _timeToInvoke)
+                {
+                    Debug.Log("Long press detected!");
+                    onClick.Invoke();
+                    _timeToInvokeT = 0;
+                }
             }
         }
     }
@@ -34,6 +47,7 @@ public class LongPressButton : Button
         base.OnPointerUp(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
     
     public override void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData)
@@ -41,6 +55,7 @@ public class LongPressButton : Button
         base.OnPointerExit(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
     
     public override void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData)
@@ -48,6 +63,7 @@ public class LongPressButton : Button
         base.OnPointerEnter(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
     
     public override void OnPointerClick(UnityEngine.EventSystems.PointerEventData eventData)
@@ -55,6 +71,7 @@ public class LongPressButton : Button
         base.OnPointerClick(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
     
     public override void OnSubmit(UnityEngine.EventSystems.BaseEventData eventData)
@@ -62,6 +79,7 @@ public class LongPressButton : Button
         base.OnSubmit(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
     
     public override void OnSelect(UnityEngine.EventSystems.BaseEventData eventData)
@@ -69,6 +87,7 @@ public class LongPressButton : Button
         base.OnSelect(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
     
     public override void OnDeselect(UnityEngine.EventSystems.BaseEventData eventData)
@@ -76,6 +95,7 @@ public class LongPressButton : Button
         base.OnDeselect(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
     
     public override void OnMove(UnityEngine.EventSystems.AxisEventData eventData)
@@ -83,6 +103,7 @@ public class LongPressButton : Button
         base.OnMove(eventData);
         _isPressed = false;
         _timePressed = 0;
+        _timeToInvokeT = 0;
     }
 }
 }

@@ -81,8 +81,8 @@ public class CoffeeGeneratorSlotUI : MonoBehaviour
     public void UpdateSlot()
     {
         OnCoffeesChanged(_player.Coffees);
-        uint newPrice = _player.GeneratorManager.GetUpgradeCost(_generatorSO);
-        Debug.Log(_generatorSO.Name + " newPrice: " + newPrice);
+        //uint newPrice = _player.GeneratorManager.GetUpgradeCost(_generatorSO);
+        //Debug.Log(_generatorSO.Name + " newPrice: " + newPrice);
         
         _costText.SetText(_player.GeneratorManager.GetCost(_generatorSO).ToString());
         _amountText.SetText(_player.GeneratorManager.GetGeneratorAmount(_generatorSO).ToString());

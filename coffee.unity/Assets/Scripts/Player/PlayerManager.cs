@@ -58,7 +58,7 @@ public class PlayerManager : MonoBehaviour
     {
         PlayerStats.SecondsPlayed += (ulong)(1 * GameManager.Instance.FastForward);
         PlayerStatsChangedEvent?.Invoke(PlayerStats);
-        Debug.Log("OnSecondTick, seconds played: " + PlayerStats.SecondsPlayed);
+        //Debug.Log("OnSecondTick, seconds played: " + PlayerStats.SecondsPlayed);
     }
 
     private void OnGeneratorsChanged(Dictionary<CoffeeGeneratorSO, CoffeeGenerator> generatorManagerGenerators)
