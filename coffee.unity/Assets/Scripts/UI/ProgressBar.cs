@@ -1,8 +1,7 @@
-using System;
 using TMPro;
 using UnityEngine;
 
-namespace UI
+namespace POLYGONWARE.Coffee.UI
 {
 public class ProgressBar : MonoBehaviour
 {

@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
+namespace POLYGONWARE.Coffee.TextMesh_Pro.Examples___Extras.Scripts
+{
 public class ChatController : MonoBehaviour {
 
 
@@ -48,4 +50,5 @@ public class ChatController : MonoBehaviour {
         ChatScrollbar.value = 0;
     }
 
+}
 }

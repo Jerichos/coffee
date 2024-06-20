@@ -2,7 +2,6 @@
 using POLYGONWARE.Coffee.Player;
 using POLYGONWARE.Coffee.Utilities;
 using TMPro;
-using UI;
 using UnityEngine;
 using UnityEngine.UI;
 

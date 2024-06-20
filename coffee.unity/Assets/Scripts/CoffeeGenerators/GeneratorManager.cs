@@ -10,6 +10,8 @@ public class GeneratorManager
     public Dictionary<CoffeeGeneratorSO, CoffeeGenerator> Generators { get; private set; }
     
     public Action<Dictionary<CoffeeGeneratorSO, CoffeeGenerator>> GeneratorsChangedEvent;
+    
+    public Action<CoffeeGenerator> GeneratorBoughtEvent;
 
     public GeneratorManager()
     {
@@ -33,6 +35,7 @@ public class GeneratorManager
         if (Generators.TryGetValue(generatorSO, out var generator))
         {
             generator.Buy();
+            GeneratorBoughtEvent?.Invoke(generator);
         }
         else
         {

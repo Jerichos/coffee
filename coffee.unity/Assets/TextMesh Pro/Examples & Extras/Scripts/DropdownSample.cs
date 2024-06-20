@@ -1,6 +1,8 @@
 ﻿using TMPro;
 using UnityEngine;
 
+namespace POLYGONWARE.Coffee.TextMesh_Pro.Examples___Extras.Scripts
+{
 public class DropdownSample: MonoBehaviour
 {
 	[SerializeField]
@@ -16,4 +18,5 @@ public class DropdownSample: MonoBehaviour
 	{
 		text.text = dropdownWithPlaceholder.value > -1 ? "Selected values:\n" + dropdownWithoutPlaceholder.value + " - " + dropdownWithPlaceholder.value : "Error: Please make a selection";
 	}
+}
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using POLYGONWARE.Coffee.Buffs;
 using POLYGONWARE.Coffee.CoffeeGenerators;
+using POLYGONWARE.Coffee.Game;
 using UnityEngine;
 
 namespace POLYGONWARE.Coffee.Player
@@ -11,11 +13,13 @@ public class PlayerManager : MonoBehaviour
 {
     public BigInteger Coffees { get; private set; }
     public BigInteger TotalCoffeesGenerated { get; private set; }
+    
     public double Cps { get; private set; }
     
     public LevelManager LevelManager { get; private set; }
     public PrestigeManager PrestigeManager { get; private set; }
     public GeneratorManager GeneratorManager { get; private set; }
+    public BuffManager BuffManager { get; private set; }
     
     public Action<BigInteger> OnCoffeesChanged;
     public Action<BigInteger> OnTotalCoffeesGeneratedChanged;
@@ -25,17 +29,31 @@ public class PlayerManager : MonoBehaviour
     public PlayerStats PlayerStats;
 
     private double _cookiesTemp;
+    
+    public double CpsMultiplierBonus { get; set; }
+    public double CpsAdditionBonus { get; set; }
+
+    public static PlayerManager LocalPlayer;
 
     private void Awake()
     {
         Debug.Log("PlayerManager Awake");
+        
+        if (LocalPlayer == null)
+            LocalPlayer = this;
+        
+        CpsMultiplierBonus = 1;
+        
         LevelManager = new LevelManager(this);
         PrestigeManager = new PrestigeManager();
         GeneratorManager = new GeneratorManager();
+        BuffManager = new BuffManager(this);
     }
 
     private void Update()
     {
+        BuffManager.Update(Time.deltaTime);
+        
         _cookiesTemp += Cps * (double)Time.deltaTime * GameManager.Instance.FastForward;
         
         if (_cookiesTemp >= 1)
@@ -63,7 +81,15 @@ public class PlayerManager : MonoBehaviour
 
     private void OnGeneratorsChanged(Dictionary<CoffeeGeneratorSO, CoffeeGenerator> generatorManagerGenerators)
     {
+        RecalculateCps();
+    }
+    
+    public void RecalculateCps()
+    {
         Cps = GeneratorManager.GetTotalCps();
+        Cps += CpsAdditionBonus;
+        Cps *= CpsMultiplierBonus;
+        
         OnCpsChanged?.Invoke(Cps);
     }
 

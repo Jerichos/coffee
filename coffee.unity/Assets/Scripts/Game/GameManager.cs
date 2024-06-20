@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace POLYGONWARE.Coffee.Player
+namespace POLYGONWARE.Coffee.Game
 {
     public class GameManager : MonoBehaviour
     {
