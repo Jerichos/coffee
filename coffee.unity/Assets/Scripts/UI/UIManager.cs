@@ -15,7 +15,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _totalCoffeesText;
     [SerializeField] private TMP_Text _levelText;
     [SerializeField] private TMP_Text _coffeesToNextLevelText;
-    [SerializeField] private TMP_Text _cps;
+    //[SerializeField] private TMP_Text _cps;
+    [SerializeField] private CpsUI _cps;
     [SerializeField] private TMP_Text _levelPointsLeftText;
     [SerializeField] private TMP_Text _timePlayedText;
     
@@ -39,7 +40,7 @@ public class UIManager : MonoBehaviour
         OnCoffeesChanged(_playerManager.Coffees);
         OnLevelChanged(_playerManager.LevelManager.Level);
         OnTotalCoffeesGeneratedChanged(_playerManager.TotalCoffeesGenerated);
-        OnCpsChanged(_playerManager.Cps);
+        OnCpsChanged(0, _playerManager.Cps);
         
         _playerManager.LevelManager.LevelPointsChangedEvent += OnLevelPointsChanged;
         _playerManager.LevelManager.CanLevelUPEvent += OnCanLevelUpChanged;
@@ -67,9 +68,9 @@ public class UIManager : MonoBehaviour
         _prestigeProgressBar.gameObject.SetActive(!value);
     }
 
-    private void OnCpsChanged(double amount)
+    private void OnCpsChanged(double oldValue, double newValue)
     {
-        _cps.SetText(amount.ToString("F1"));
+        _cps.SetValue(oldValue, newValue);
     }
 
     private void OnTotalCoffeesGeneratedChanged(BigInteger value)

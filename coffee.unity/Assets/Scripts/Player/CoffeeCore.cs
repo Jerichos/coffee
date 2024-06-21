@@ -1,9 +1,11 @@
-﻿using POLYGONWARE.Coffee.CoffeeGenerators;
+﻿using System;
+using POLYGONWARE.Coffee.CoffeeGenerators;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace POLYGONWARE.Coffee.Player
 {
-public class CoffeeCore : MonoBehaviour
+public class CoffeeCore : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private SpriteRenderer _coffeeCore;
     [SerializeField] private SpriteRenderer _gen1;
@@ -12,10 +14,9 @@ public class CoffeeCore : MonoBehaviour
     
     private void Awake()
     {
-        _coffeeCore.gameObject.SetActive(false);
-        _gen1.gameObject.SetActive(false);
+        
     }
-    
+
     private void OnGeneratorBought(CoffeeGenerator generator)
     {
         if (generator.GeneratorSO.ID == "gen_1")
@@ -32,6 +33,11 @@ public class CoffeeCore : MonoBehaviour
     private void OnDisable()
     {
         _player.GeneratorManager.GeneratorBoughtEvent -= OnGeneratorBought;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        _player.TapTap();
     }
 }
 }

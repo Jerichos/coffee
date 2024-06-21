@@ -23,7 +23,7 @@ public class PlayerManager : MonoBehaviour
     
     public Action<BigInteger> OnCoffeesChanged;
     public Action<BigInteger> OnTotalCoffeesGeneratedChanged;
-    public Action<double> OnCpsChanged;
+    public Action<double, double> OnCpsChanged;
     public Action<PlayerStats> PlayerStatsChangedEvent;
 
     public PlayerStats PlayerStats;
@@ -86,11 +86,12 @@ public class PlayerManager : MonoBehaviour
     
     public void RecalculateCps()
     {
+        var prevCps = Cps;
         Cps = GeneratorManager.GetTotalCps();
         Cps += CpsAdditionBonus;
         Cps *= CpsMultiplierBonus;
         
-        OnCpsChanged?.Invoke(Cps);
+        OnCpsChanged?.Invoke(prevCps, Cps);
     }
 
     private void OnDisable()

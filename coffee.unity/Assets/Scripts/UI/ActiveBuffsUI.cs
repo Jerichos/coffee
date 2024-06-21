@@ -10,12 +10,14 @@ public class ActiveBuffsUI : MonoBehaviour
 {
     [SerializeField] private PlayerManager _player;
     [SerializeField] private BuffUI _buffUIPrefab;
+    [SerializeField] private GameObject _panel;
     
     private readonly Dictionary<Buff, BuffUI> _buffUIs = new();
 
     private void Awake()
     {
         _buffUIPrefab.gameObject.SetActive(false);
+        _panel.SetActive(false);
     }
 
     private void OnEnable()
@@ -42,6 +44,11 @@ public class ActiveBuffsUI : MonoBehaviour
             Destroy(buffUI.gameObject);
             _buffUIs.Remove(buff);
         }
+        
+        // close view if no more buffs
+        if (_buffUIs.Count == 0)
+            _panel.SetActive(false);
+        
         Debug.LogWarning("Buff removed!");
     }
 
@@ -54,10 +61,15 @@ public class ActiveBuffsUI : MonoBehaviour
             return;
         }
         
-        var buffUI = Instantiate(_buffUIPrefab, transform);
+        var buffUI = Instantiate(_buffUIPrefab, _panel.transform);
         buffUI.Initialize(buff);
         buffUI.gameObject.SetActive(true);
         _buffUIs.Add(buff, buffUI);
+        
+        // open view if there are buffs
+        if (_buffUIs.Count == 1)
+            _panel.SetActive(true);
+        
         Debug.LogWarning("Buff added!");
     }
 }
