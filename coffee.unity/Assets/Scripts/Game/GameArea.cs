@@ -4,7 +4,7 @@ namespace POLYGONWARE.Coffee.Game
 {
 
 // is within screen bounds and within user defined margin
-public class CoffeeArea : MonoBehaviour
+public class GameArea : MonoBehaviour
 {
     [SerializeField] private Camera _camera;
     
@@ -20,7 +20,7 @@ public class CoffeeArea : MonoBehaviour
     public Vector3 Min => _min;
     public Vector3 Max => _max;
     
-    public static CoffeeArea Instance { get; private set; }
+    public static GameArea Instance { get; private set; }
 
     private void Awake()
     {

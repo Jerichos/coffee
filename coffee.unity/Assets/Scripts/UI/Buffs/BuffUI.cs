@@ -18,7 +18,7 @@ public class BuffUI : MonoBehaviour, IPointerClickHandler
     public void Update()
     {
         // update timer image fill amount
-        _timerImage.fillAmount = _buff.TimeLeft / _buff.BuffSO.Duration;
+        _timerImage.fillAmount = (float)(_buff.TimeLeft / _buff.BuffSO.Duration);
     }
 
     public void Initialize(Buff buff)

@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour
 
     private void OnPlayerStatsChanged(PlayerStats playerStats)
     {
-        _timePlayedText.SetText(Util.FormatSecondsToDDHHMM(playerStats.SecondsPlayed));
+        _timePlayedText.SetText(TimeFormatter.FormatSecondsToDDHHMM(playerStats.SecondsPlayed));
     }
 
     private void OnLevelPointsChanged(uint value)

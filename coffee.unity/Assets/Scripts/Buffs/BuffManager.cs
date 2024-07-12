@@ -22,7 +22,7 @@ public class BuffManager
         _playerManager = player;
     }
     
-    public void Update(float deltaTime)
+    public void Update(double deltaTime)
     {
         for (int i = 0; i < ActiveBuffs.Count; i++)
         {

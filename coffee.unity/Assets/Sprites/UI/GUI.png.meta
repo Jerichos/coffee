@@ -814,8 +814,8 @@ TextureImporter:
       name: GUI_49
       rect:
         serializedVersion: 2
-        x: 128
-        y: 128
+        x: 129
+        y: 129
         width: 128
         height: 128
       alignment: 0

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using POLYGONWARE.Coffee.Theme;
 using TMPro;
 using UnityEngine;
 
@@ -11,17 +12,17 @@ public class FloatingTextUI : MonoBehaviour
     [SerializeField] private Animator _animator;
     
     // TODO: create pool system
-    static List<FloatingTextUI> _pool = new();
+    private static readonly List<FloatingTextUI> _pool = new();
 
     private void Awake()
     {
-        _pool.Add(this);
+        OnAnimationEnd();
         PreWarm(10);
     }
 
     public FloatingTextUI Create(Transform parent, string text)
     {
-        return Create(parent, text, Color.white);
+        return Create(parent, text, ThemeManager.ColorPalette.NumberNormal);
     }
     
     public FloatingTextUI Create(Transform parent, string text, Color textColor)
@@ -39,6 +40,8 @@ public class FloatingTextUI : MonoBehaviour
             var floatingText = Instantiate(this, transform);
             floatingText.gameObject.SetActive(false);
             _pool.Add(floatingText);
+            
+            Debug.Log("Pre-warming floating text pool... count: " + _pool.Count);
         }
     }
     

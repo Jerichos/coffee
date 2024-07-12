@@ -7,7 +7,7 @@ public class Buff
 {
     public BuffSO BuffSO { get; private set; }
     
-    public float TimeLeft { get; private set; }
+    public double TimeLeft { get; private set; }
     
     public Buff(BuffSO buffSO)
     {
@@ -15,7 +15,7 @@ public class Buff
         TimeLeft = buffSO.Duration;
     }
 
-    public void Update(float deltaTime)
+    public void Update(double deltaTime)
     {
         TimeLeft -= deltaTime;
 

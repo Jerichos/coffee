@@ -17,7 +17,7 @@ public class StatsUI : MonoBehaviour
                           $"TotalGeneratedCoffee: {playerPlayerStats.TotalGeneratedCoffee}\n" +
                           $"TotalSpentCoffee: {playerPlayerStats.TotalSpentCoffee}\n" +
                           $"MaxLevelReached: {playerPlayerStats.MaxLevelReached}\n" +
-                          $"SecondsPlayed: {Util.FormatSecondsToHHMM(playerPlayerStats.SecondsPlayed)}";
+                          $"SecondsPlayed: {TimeFormatter.FormatSecondsToHHMM(playerPlayerStats.SecondsPlayed)}";
     }
     
     private void OnEnable()

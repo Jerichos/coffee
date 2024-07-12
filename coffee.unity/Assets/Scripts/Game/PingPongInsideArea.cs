@@ -26,11 +26,11 @@ public class PingPongInsideArea : MonoBehaviour
         _velocity = _direction * (_speed * Time.deltaTime);
         _transform.position += _velocity;
 
-        if (!CoffeeArea.Instance.IsWithinArea(_transform.position))
+        if (!GameArea.Instance.IsWithinArea(_transform.position))
         {
             // get random point in area
-            Vector3 randomPoint = new Vector3(Random.Range(CoffeeArea.Instance.Min.x, CoffeeArea.Instance.Max.x),
-                Random.Range(CoffeeArea.Instance.Min.y, CoffeeArea.Instance.Max.y), 0);
+            Vector3 randomPoint = new Vector3(Random.Range(GameArea.Instance.Min.x, GameArea.Instance.Max.x),
+                Random.Range(GameArea.Instance.Min.y, GameArea.Instance.Max.y), 0);
             _direction = (randomPoint - _transform.position).normalized;
         }
     }

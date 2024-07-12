@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e69bc86407b640c0842f6d8b551628ac, type: 3}
+  m_Name: RainOfBeansUpgrade
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 1501119467, guid: e64d12a6eddff5e4db46167550b3c785, type: 3}
+  _name: Rain Of Beans
+  _description: There is chance of % that rain of beans will start.
+  _costString: 1
+  _cooldown: 5
+  _value: 0.05
+  _timeToUpgrade: 2
+  _unlockLevel: 0
+  _prefab: {fileID: 0}
+  _typeName: POLYGONWARE.Coffee.Upgrades.RainOfBeansUpgrade
+  _soundClue1: {fileID: 8300000, guid: 2e1811638e126c34e8058912da639a40, type: 3}

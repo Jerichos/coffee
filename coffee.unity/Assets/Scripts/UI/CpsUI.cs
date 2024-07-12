@@ -33,7 +33,7 @@ public class CpsUI : MonoBehaviour
         }
         else
         {
-            text = $"-{diff:F2}";
+            text = $"{diff:F2}";
             color = ThemeManager.ColorPalette.NumberNegative;
         }
         

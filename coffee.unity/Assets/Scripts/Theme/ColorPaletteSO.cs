@@ -8,5 +8,6 @@ public class ColorPaletteSO : ScriptableObject
     public Color NumberNormal;
     public Color NumberPositive;
     public Color NumberNegative;
+    public Color TextNormal { get; set; }
 }
 }

@@ -4,6 +4,7 @@ using System.Numerics;
 using POLYGONWARE.Coffee.Buffs;
 using POLYGONWARE.Coffee.CoffeeGenerators;
 using POLYGONWARE.Coffee.Game;
+using POLYGONWARE.Coffee.Upgrades;
 using UnityEngine;
 
 namespace POLYGONWARE.Coffee.Player
@@ -11,7 +12,9 @@ namespace POLYGONWARE.Coffee.Player
 [DefaultExecutionOrder(-10)]
 public class PlayerManager : MonoBehaviour
 {
+    // TODO: move to resources
     public BigInteger Coffees { get; private set; }
+    // TODO: move to stats
     public BigInteger TotalCoffeesGenerated { get; private set; }
     
     public double Cps { get; private set; }
@@ -20,9 +23,11 @@ public class PlayerManager : MonoBehaviour
     public PrestigeManager PrestigeManager { get; private set; }
     public GeneratorManager GeneratorManager { get; private set; }
     public BuffManager BuffManager { get; private set; }
+    public UpgradeManager UpgradeManager { get; private set; }
     
     public Action<BigInteger> OnCoffeesChanged;
     public Action<BigInteger> OnTotalCoffeesGeneratedChanged;
+    public Action<BigInteger> TapTapEvent;
     public Action<double, double> OnCpsChanged;
     public Action<PlayerStats> PlayerStatsChangedEvent;
 
@@ -48,13 +53,17 @@ public class PlayerManager : MonoBehaviour
         PrestigeManager = new PrestigeManager();
         GeneratorManager = new GeneratorManager();
         BuffManager = new BuffManager(this);
+        UpgradeManager = new UpgradeManager(this);
     }
 
     private void Update()
     {
-        BuffManager.Update(Time.deltaTime);
+        double deltaTime = Time.deltaTime * GameManager.Instance.FastForward;
         
-        _cookiesTemp += Cps * (double)Time.deltaTime * GameManager.Instance.FastForward;
+        BuffManager.Update(deltaTime);
+        UpgradeManager.Update(deltaTime);
+        
+        _cookiesTemp += Cps * deltaTime;
         
         if (_cookiesTemp >= 1)
         {
@@ -102,8 +111,10 @@ public class PlayerManager : MonoBehaviour
 
     public void TapTap()
     {
-        AddGeneratedCoffee(1);
+        BigInteger tapTapCoffees = 1;
+        AddGeneratedCoffee(tapTapCoffees);
         PlayerStats.TapTapCount++;
+        TapTapEvent?.Invoke(tapTapCoffees);
         Debug.Log("TapTaps: " + PlayerStats.TapTapCount);
     }
     
@@ -127,13 +138,18 @@ public class PlayerManager : MonoBehaviour
         }
     }
     
-    public void AddGeneratedCoffee(uint amount)
+    public void AddGeneratedCoffee(BigInteger amount)
     {
         Coffees += amount;
         TotalCoffeesGenerated += amount;
         
         OnCoffeesChanged?.Invoke(Coffees);
         OnTotalCoffeesGeneratedChanged?.Invoke(TotalCoffeesGenerated);
+    }
+    
+    public void AddCoffeeBonus(BigInteger bonus)
+    {
+        AddGeneratedCoffee(bonus);
     }
 
     public void UpgradeGenerator(CoffeeGeneratorSO generatorSO, Action<bool> callback)
@@ -171,5 +187,7 @@ public class PlayerManager : MonoBehaviour
         LevelManager.ConsumeLevelPoints(upgradeCost);
         callback?.Invoke(true);
     }
+
+    
 }
 }
