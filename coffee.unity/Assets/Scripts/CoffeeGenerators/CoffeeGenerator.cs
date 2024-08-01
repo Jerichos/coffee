@@ -10,7 +10,7 @@ namespace POLYGONWARE.Coffee.CoffeeGenerators
 
 public class CoffeeGenerator
 {
-    public double Cps => (GeneratorSO.Cps * Amount) * TotalLevelUpgradesCpsGain;
+    public double Cps => ((GeneratorSO.Cps + CpsAdditionBonus) * Amount) * CpsMultiplierBonus * TotalLevelUpgradesCpsGain;
     public BigInteger Cost => Amount == 0 ? GeneratorSO.Cost : (BigInteger)(Math.Pow(GeneratorSO.CostMultiplierPerAmount, Amount) * (double)GeneratorSO.Cost);
     public uint LevelUpgradeCost => Level + 1;
     
@@ -22,32 +22,29 @@ public class CoffeeGenerator
     public double TotalLevelUpgradesCpsGain => Math.Pow(PerLevelCpsGain, Level);
     
     public CoffeeGeneratorSO GeneratorSO { get; private set; }
+    
+    // generator attributes:
+    public double CpsAdditionBonus { get; set; }
+    public double CpsMultiplierBonus { get; set; }
 
     public CoffeeGenerator(CoffeeGeneratorSO generatorSO)
     {
         GeneratorSO = generatorSO;
         Level = 0;
         Amount = 0;
+        CpsAdditionBonus = 0;
+        CpsMultiplierBonus = 1;
         Debug.Log("BaseCost: " + Cost + " SOCost: " + generatorSO.Cost);
     }
 
     public void LevelUpgrade()
     {
-        var cpsGainBefore = TotalLevelUpgradesCpsGain;
-        var cpsBefore = Cps;
         Level++;
-        Debug.Log("level upgrade, increased cps gain from " + cpsGainBefore + " to " + TotalLevelUpgradesCpsGain);
-        Debug.Log("level upgrade, increased cps from " + cpsBefore + " to " + Cps);
     }
     
     public void Buy()
     {
-        var buyCost = Cost;
-        var prevAmount = Amount;
         Amount++;
-        var newCost = Cost;
-        Debug.Log("bought generator, increased amount from " + prevAmount + " to " + Amount);
-        Debug.Log("bought generator, increased cost from " + buyCost + " to " + newCost);
     }
 
     public double GetCpsPerCost()

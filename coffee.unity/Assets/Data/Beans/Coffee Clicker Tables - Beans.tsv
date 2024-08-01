@@ -1,0 +1,12 @@
+ID	Name	Description	RequiredLevel	DropRate	Duration	V1
+Bean.MultiplierBean	Multiplier Bean	Instantly grants a massive coffee boost, multiplying the current coffee count by [v1].	10	0.05		10
+Bean.SpeedBean	Speed Bean	Coffee production for the next [d] is increased by [v1%]	20	0.02	30	2
+Bean.TapTapBean	TapTap Bean	Increases tap efficiency by [v1%] for the next [d].	30	0.02	5	1.5
+Bean.TurboBean	Turbo Bean	Increases one random coffee producer production by 50% for 15 minutes.	40	0.01		1.5
+Bean.BronzeBean	Bronze Bean	Grants [v1%cps] beans.	50	0.01		1
+Bean.SilverBean	Silver Bean	Grants [v1%cps] beans.	60	0.01		2
+Bean.GoldenBean	Golden Bean	Grants [v1%cps] beans.	70	0.01		3
+Bean.RubyBean	Ruby Bean	Reduces cooldown of skills and abilities by [v1%]	80	0.05		0.2
+Bean.EmeraldBean	Emerald Bean	Increases the coffee production by [v1%] from all sources for [d].	90	0.01	60	3
+Bean.ShadowBean	Shadow Bean	Temporarily opens the rift and pulls beans from other dimension.	100	0.001		
+Bean.DiamondBean	Diamond Bean	Provides a permanent 5% increase in coffee production.	110	0.001		1.05

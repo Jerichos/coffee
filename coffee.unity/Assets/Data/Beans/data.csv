@@ -1,0 +1,2 @@
+ID,Name,Description,RequiredLevel,DropRate,Duration,V1
+Bean.MultiplierBean,Multiplier Bean,"Instantly grants a massive coffee boost; multiplying the current coffee count by [v1].",10,0.05,0,10

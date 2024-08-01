@@ -1,11 +1,10 @@
-﻿using System;
-using POLYGONWARE.Coffee.Buffs;
+﻿using POLYGONWARE.Coffee.Buffs;
 using POLYGONWARE.Coffee.Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace POLYGONWARE.Coffee.UI
+namespace POLYGONWARE.Coffee.UI.Buffs
 {
 public class AddBuffTest : MonoBehaviour
 {

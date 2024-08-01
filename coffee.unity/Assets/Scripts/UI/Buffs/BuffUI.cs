@@ -1,10 +1,9 @@
-﻿using System;
-using POLYGONWARE.Coffee.Buffs;
+﻿using POLYGONWARE.Coffee.Buffs;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace POLYGONWARE.Coffee.UI
+namespace POLYGONWARE.Coffee.UI.Buffs
 {
 public class BuffUI : MonoBehaviour, IPointerClickHandler
 {

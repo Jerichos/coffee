@@ -1,6 +1,6 @@
 ﻿using System;
 using POLYGONWARE.Coffee.Common.UI;
-using POLYGONWARE.Coffee.Upgrades;
+using POLYGONWARE.Coffee.Player;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -67,5 +67,16 @@ public class UpgradeUI : SelectableBase
     {
         Select();
     }
+    
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if(_upgradeSO == null) 
+            return;
+        
+        _icon.sprite = _upgradeSO.Icon;
+        name = _upgradeSO.name + " Upgrade";
+    }
+#endif
 }
 }

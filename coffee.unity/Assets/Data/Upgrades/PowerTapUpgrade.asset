@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e69bc86407b640c0842f6d8b551628ac, type: 3}
   m_Name: PowerTapUpgrade
   m_EditorClassIdentifier: 
-  _icon: {fileID: 1501119467, guid: e64d12a6eddff5e4db46167550b3c785, type: 3}
+  _icon: {fileID: -1330488272, guid: e64d12a6eddff5e4db46167550b3c785, type: 3}
   _name: Power Tap
   _description: after [c] seconds of tapping (any tap type), you get bonus of [v]
     per rank ([t] current bonus) of accumulated coffees generated in the last [c]

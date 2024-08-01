@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e69bc86407b640c0842f6d8b551628ac, type: 3}
   m_Name: RainOfBeansUpgrade
   m_EditorClassIdentifier: 
-  _icon: {fileID: 1501119467, guid: e64d12a6eddff5e4db46167550b3c785, type: 3}
+  _icon: {fileID: 929690004, guid: a93b482406b503849b99d93bf6be5eb6, type: 3}
   _name: Rain Of Beans
   _description: There is chance of % that rain of beans will start.
   _costString: 1

@@ -1,7 +1,6 @@
 ﻿using POLYGONWARE.Coffee.Common;
 using POLYGONWARE.Coffee.Player;
 using POLYGONWARE.Coffee.Theme;
-using POLYGONWARE.Coffee.Upgrades;
 using POLYGONWARE.Coffee.Utilities;
 using TMPro;
 using UnityEngine;

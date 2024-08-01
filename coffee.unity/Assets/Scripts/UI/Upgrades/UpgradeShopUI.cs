@@ -2,7 +2,6 @@
 using System.Numerics;
 using POLYGONWARE.Coffee.Common.UI;
 using POLYGONWARE.Coffee.Player;
-using POLYGONWARE.Coffee.Upgrades;
 using UnityEngine;
 using UnityEngine.UI;
 

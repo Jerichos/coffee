@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using POLYGONWARE.Coffee.Upgrades;
+using POLYGONWARE.Coffee.Player;
 
 namespace POLYGONWARE.Coffee.Utilities
 {

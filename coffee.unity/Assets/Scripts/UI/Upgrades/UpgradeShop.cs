@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using POLYGONWARE.Coffee.Common;
 using POLYGONWARE.Coffee.Player;
-using POLYGONWARE.Coffee.Upgrades;
+using POLYGONWARE.Coffee.Player.Upgrades;
 using POLYGONWARE.Coffee.Utilities;
 using UnityEngine;
 

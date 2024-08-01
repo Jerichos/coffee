@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using POLYGONWARE.Coffee.Buffs;
 using POLYGONWARE.Coffee.Player;
 using UnityEngine;
 
-namespace POLYGONWARE.Coffee.UI
+namespace POLYGONWARE.Coffee.UI.Buffs
 {
 public class ActiveBuffsUI : MonoBehaviour
 {

@@ -4,7 +4,6 @@ using System.Numerics;
 using POLYGONWARE.Coffee.Buffs;
 using POLYGONWARE.Coffee.CoffeeGenerators;
 using POLYGONWARE.Coffee.Game;
-using POLYGONWARE.Coffee.Upgrades;
 using UnityEngine;
 
 namespace POLYGONWARE.Coffee.Player
@@ -24,6 +23,8 @@ public class PlayerManager : MonoBehaviour
     public GeneratorManager GeneratorManager { get; private set; }
     public BuffManager BuffManager { get; private set; }
     public UpgradeManager UpgradeManager { get; private set; }
+    public BeanManager BeanManager { get; private set; }
+    public AbilityManager AbilitiesManager { get; set; }
     
     public Action<BigInteger> OnCoffeesChanged;
     public Action<BigInteger> OnTotalCoffeesGeneratedChanged;
@@ -54,6 +55,7 @@ public class PlayerManager : MonoBehaviour
         GeneratorManager = new GeneratorManager();
         BuffManager = new BuffManager(this);
         UpgradeManager = new UpgradeManager(this);
+        BeanManager = new BeanManager(this);
     }
 
     private void Update()

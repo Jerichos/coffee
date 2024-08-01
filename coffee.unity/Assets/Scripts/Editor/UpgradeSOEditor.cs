@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using POLYGONWARE.Coffee.Upgrades;
+using POLYGONWARE.Coffee.Player;
 using UnityEditor;
 
 namespace POLYGONWARE.Coffee.Editor
